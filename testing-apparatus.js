@@ -1,12 +1,14 @@
 module.exports.timeAndExecute = (functionToTest, inputs, iterations) => {
-    let totalTime = 0;
+    const startTime = process.hrtime();
     for (let i = 0; i < iterations; i++) {
-        const startTime = Date.now();
         for (let j = 0; j < inputs.length; j++) {
             functionToTest.apply(null, inputs[j]);
         }
-        totalTime += Date.now() - startTime;
     }
 
-    return { totalTime, averageTime: totalTime / iterations };
+    const [seconds, nanoseconds] = process.hrtime(startTime);
+
+    const totalTime = (seconds * 1000) + (nanoseconds / (1000 * 1000));
+
+    return { totalTime, averageTime: totalTime / iterations, hrtime: [seconds, nanoseconds] };
 };
